@@ -1,40 +1,26 @@
 import time
 import pytest
 
-from Inverted_pendulum_lqg import inverted_pendulum_robot
+from inverted_pendulum_control import InvertedPendulumRobot
 
 class TestRobotWhiteBox:
     
     @pytest.fixture(scope="class", params=[
-        # (0.0,       0.0,        0.0,        0.0),
-        # (-0.1,      0.0,        0.0,        0.0),
-        # (0.0,       0.00001,    0.0,        0.0),
-        # (0.0,      -0.00001,    0.0,        0.0),
-        # (0.0,       0.0,        0.00001,    0.0),
-        # (0.0,       0.0,       -0.00001,    0.0),
-        # (0.0,       0.0,        0.0,        0.00001),
-        # (0.0,       0.0,        0.0,       -0.00001),
-        # (0.00001,  -0.00001,    0.0,        0.0),
-        # (-0.00001,  0.00001,    0.0,        0.0),
-        # (0.0,       0.0,        0.00001,    0.00001),
-        # (0.0,       0.0,       -0.00001,   -0.00001),
-        # (0.0,       0.0,        0.00001,   -0.00001),
-        (0.0,       -0.001,        0.00001,   -0.00001),
+        (0.01, 0.001, 10.0),
     ])
     def fixture_inverted_pendulum(self, request):
         
-        x           = request.param[0]
-        x_dot       = request.param[1]
-        theta       = request.param[2]
-        theta_dot   = request.param[3]
+        Bm          = request.param[0]
+        dt          = request.param[1]
+        int_time    = request.param[2]
         
-        yield inverted_pendulum_robot(x, x_dot, theta, theta_dot)
+        yield InvertedPendulumRobot(motor_Bm=Bm, dt_system=dt, integration_time=int_time)
         
-    def test_plot(self, fixture_inverted_pendulum:inverted_pendulum_robot):
-        fixture_inverted_pendulum.plot_dynamics()
+    def test_plot(self, fixture_inverted_pendulum:InvertedPendulumRobot):
+        fixture_inverted_pendulum.step_response()
         
         
-    def test_animation(self, fixture_inverted_pendulum:inverted_pendulum_robot):
+    def test_animation(self, fixture_inverted_pendulum:InvertedPendulumRobot):
         fixture_inverted_pendulum.animate_system()
         
         
